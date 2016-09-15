@@ -12,4 +12,4 @@ inputs:
 
 run:
   path: ./run-tests.sh
-  dir: src/extensions/sweden/
+  dir: sweden-repo/src/extensions/sweden/
