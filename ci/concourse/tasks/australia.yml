@@ -12,4 +12,4 @@ inputs:
 
 run:
   path: ./run-tests.sh
-  dir: australia-repo/src/extensions/australia/
+  dir: australia-repo/src/sites/australia/
