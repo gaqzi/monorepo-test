@@ -1,0 +1,106 @@
+<pipelines group="Monorepo">
+  <pipeline name="pricing">
+    <materials>
+      <git url="/Users/ba/workspace/monorepo-test/.git" invertFilter="true">
+        <filter>
+          <ignore pattern="src/extensions/pricing/" />
+        </filter>
+      </git>
+    </materials>
+    <stage name="tests">
+      <jobs>
+        <job name="run">
+          <tasks>
+            <exec command="./run-tests.sh" workingdir="src/extensions/pricing/">
+              <runif status="passed" />
+            </exec>
+          </tasks>
+        </job>
+      </jobs>
+    </stage>
+  </pipeline>
+  <pipeline name="theme--base">
+    <materials>
+      <git url="/Users/ba/workspace/monorepo-test/.git" invertFilter="true">
+        <filter>
+          <ignore pattern="src/extensions/theme--base/" />
+        </filter>
+      </git>
+      <pipeline pipelineName="pricing" stageName="tests" materialName="pricing" />
+    </materials>
+    <stage name="tests">
+      <jobs>
+        <job name="run">
+          <tasks>
+            <exec command="./run-tests.sh" workingdir="src/extensions/theme--base/">
+              <runif status="passed" />
+            </exec>
+          </tasks>
+        </job>
+      </jobs>
+    </stage>
+  </pipeline>
+  <pipeline name="theme--sweden">
+    <materials>
+      <git url="/Users/ba/workspace/monorepo-test/.git" invertFilter="true">
+        <filter>
+          <ignore pattern="src/extensions/theme--sweden/" />
+        </filter>
+      </git>
+      <pipeline pipelineName="theme--base" stageName="tests" materialName="theme--base" />
+    </materials>
+    <stage name="tests">
+      <jobs>
+        <job name="run">
+          <tasks>
+            <exec command="./run-tests.sh" workingdir="src/extensions/theme--sweden/">
+              <runif status="passed" />
+            </exec>
+          </tasks>
+        </job>
+      </jobs>
+    </stage>
+  </pipeline>
+  <pipeline name="australia">
+    <materials>
+      <git url="/Users/ba/workspace/monorepo-test/.git" invertFilter="true">
+        <filter>
+          <ignore pattern="src/sites/australia/" />
+        </filter>
+      </git>
+      <pipeline pipelineName="theme--base" stageName="tests" materialName="theme--base" />
+    </materials>
+    <stage name="tests">
+      <jobs>
+        <job name="run">
+          <tasks>
+            <exec command="./run-tests.sh" workingdir="src/sites/australia/">
+              <runif status="passed" />
+            </exec>
+          </tasks>
+        </job>
+      </jobs>
+    </stage>
+  </pipeline>
+  <pipeline name="sweden">
+    <materials>
+      <git url="/Users/ba/workspace/monorepo-test/.git" invertFilter="true">
+        <filter>
+          <ignore pattern="src/sites/sweden/" />
+        </filter>
+      </git>
+      <pipeline pipelineName="theme--sweden" stageName="tests" materialName="theme--sweden" />
+    </materials>
+    <stage name="tests">
+      <jobs>
+        <job name="run">
+          <tasks>
+            <exec command="./run-tests.sh" workingdir="src/sites/australia/">
+              <runif status="passed" />
+            </exec>
+          </tasks>
+        </job>
+      </jobs>
+    </stage>
+  </pipeline>
+</pipelines>
