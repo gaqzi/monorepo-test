@@ -1,0 +1,111 @@
+---
+resources:
+  - name: pricing-repo
+    type: git
+    source:
+      uri: git@github.com:gaqzi/monorepo-test.git
+      branch: master
+      private_key: {{monorepo_read_key}}
+      paths:
+        - src/extensions/pricing/
+        - ci/concourse/tasks/pricing.yml
+  - name: theme--base-repo
+    type: git
+    source:
+      uri: git@github.com:gaqzi/monorepo-test.git
+      branch: master
+      private_key: {{monorepo_read_key}}
+      paths:
+        - src/extensions/theme--base/
+        - ci/concourse/tasks/theme--base.yml
+  - name: australia-repo
+    type: git
+    source:
+      uri: git@github.com:gaqzi/monorepo-test.git
+      branch: master
+      private_key: {{monorepo_read_key}}
+      paths:
+        - src/sites/australia/
+        - ci/concourse/tasks/australia.yml
+  - name: theme--sweden-repo
+    type: git
+    source:
+      uri: git@github.com:gaqzi/monorepo-test.git
+      branch: master
+      private_key: {{monorepo_read_key}}
+      paths:
+        - src/extensions/theme--sweden/
+        - ci/concourse/tasks/theme--sweden.yml
+  - name: sweden-repo
+    type: git
+    source:
+      uri: git@github.com:gaqzi/monorepo-test.git
+      branch: master
+      private_key: {{monorepo_read_key}}
+      paths:
+        - src/sites/sweden/
+        - ci/concourse/tasks/sweden.yml
+
+groups:
+  - name: australia
+    jobs:
+      - pricing
+      - theme--base
+      - australia
+  - name: sweden
+    jobs:
+      - pricing
+      - theme--base
+      - theme--sweden
+      - sweden
+
+jobs:
+  - name: pricing
+    plan:
+      - aggregate:
+          - get: pricing-repo
+            trigger: true
+      - task: tests
+        file: pricing-repo/ci/concourse/tasks/pricing.yml
+
+  - name: theme--base
+    plan:
+      - aggregate:
+          - get: theme--base-repo
+            trigger: true
+          - get: pricing-repo
+            passed: [pricing]
+      - task: tests
+        file: theme--base-repo/ci/concourse/tasks/theme--base.yml
+
+  - name: australia
+    plan:
+      - aggregate:
+        - get: australia-repo
+          trigger: true
+        - get: theme--base-repo
+          passed: [theme--base]
+      - task: tests
+        file: australia-repo/ci/concourse/tasks/australia.yml
+
+# ----
+
+  - name: theme--sweden
+    plan:
+      - aggregate:
+        - get: theme--sweden-repo
+          trigger: true
+        - get: theme--base-repo
+          passed: [theme--base]
+      - task: tests
+        file: theme--sweden-repo/ci/concourse/tasks/theme--sweden.yml
+
+  - name: sweden
+    plan:
+      - aggregate:
+        - get: sweden-repo
+          trigger: true
+        - get: theme--sweden-repo
+          passed: [theme--sweden]
+      - task: tests
+        file: sweden-repo/ci/concourse/tasks/sweden.yml
