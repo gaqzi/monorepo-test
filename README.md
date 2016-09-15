@@ -11,7 +11,7 @@ There are two sites:
 
 src/sites/{australia, sweden}
 
-These sites depend on mostly the same extensions, but they can be 
+These sites depend on mostly the same extensions, but they can be
 different for different countries.
 
 Dependency per site in order
@@ -50,5 +50,31 @@ no subsequent step would be run.
 ## How the tests work
 
 Because this is just intended to mimic the behavir of the real world the
-test script will just exit 0 or 1 depending on what we want for the current 
+test script will just exit 0 or 1 depending on what we want for the current
 scenario.
+
+# Test cases
+
+1. Initial run
+   All code is green and being run for the first time.
+   Expected outcome: All subprojects gets run in order until green
+2. A non-breaking change to theme--sweden
+   Expected outcome: theme--sweden runs, goes green and then triggers
+   sweden that goes green.
+3. A non-breaking change to pricing
+   Expected outcome: pricing goes green and all subsequent downstreams
+
+## GoCD - 16.9.0
+
+1. Passed and succeeded as expected
+2. GoCD picks up that there has been a material change. No run is scheduled
+3. GoCD picks up that there has been a material change. No run is scheduled
+
+I'm assuming the problem lies with how Go's fan-in works. Looking at
+the developer documentation for [Corner Cases (section 5.2.4)][corner-cases]
+I think this is exactly the problem I'm hitting.
+
+As I have blacklists (albeit inverted so they're whitelists) that
+targets different parts of the source tree.
+
+[corner-cases]: https://developer.go.cd/16.9.0/5/5.2.html#5-2-4-a-name-corner-cases-a-corner-cases
