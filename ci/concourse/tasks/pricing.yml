@@ -1,0 +1,15 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: ubuntu
+    tag: '14.04'
+
+inputs:
+  - name: pricing-repo
+
+run:
+  path: ./run-tests.sh
+  dir: pricing-repo/src/extensions/pricing/
